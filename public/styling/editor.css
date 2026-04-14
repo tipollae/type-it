@@ -22,3 +22,12 @@
     color:black;
     background-color: white;
 }
+
+@media (max-width: 1920px){
+
+    .editorTab .cm-content {
+        font-family: "Roboto Mono", monospace;
+        font-size: 15.5px;
+    }
+
+}

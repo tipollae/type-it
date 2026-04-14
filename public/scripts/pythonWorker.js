@@ -1,17 +1,33 @@
 let pyodide;
-let pendingInputResolve = null;
+let currentLine = "";
+
+let controlArray;
+let inputBytes;
 
 self.onmessage = async (event) => {
-    const { type, code, inputValue } = event.data;
+    const { type, code, sab, inputBuffer } = event.data;
 
     if (type === "init") {
         importScripts("https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js");
 
         pyodide = await loadPyodide();
 
+        controlArray = new Int32Array(sab);
+        inputBytes = new Uint8Array(inputBuffer);
+
         pyodide.setStdout({
-            batched: (output) => {
-                self.postMessage({ type: "stdout", output });
+            raw: (byte) => {
+                const ch = String.fromCharCode(byte);
+
+                currentLine += ch;
+
+                if (ch === "\n") {
+                    self.postMessage({
+                        type: "stdout",
+                        output: currentLine
+                    });
+                    currentLine = "";
+                }
             }
         });
 
@@ -22,14 +38,29 @@ self.onmessage = async (event) => {
         });
 
         pyodide.setStdin({
-            stdin: async () => {
-                self.postMessage({ type: "get_input" });
-
-                return await new Promise((resolve) => {
-                    pendingInputResolve = resolve;
+            stdin: () => {
+                self.postMessage({
+                    type: "get_input",
+                    text: currentLine
                 });
-            }
 
+                Atomics.store(controlArray, 0, 0);
+                Atomics.wait(controlArray, 0, 0);
+
+                const len = Atomics.load(controlArray, 1);
+                const bytes = inputBytes.slice(0, len);
+                const value = new TextDecoder().decode(bytes);
+
+                self.postMessage({
+                    type: "display_input",
+                    text: currentLine,
+                    value: value
+                });
+
+                currentLine = "";
+
+                return value;
+            }
         });
 
         self.postMessage({ type: "ready" });
@@ -37,7 +68,7 @@ self.onmessage = async (event) => {
 
     if (type === "run") {
         try {
-
+            currentLine = "";
             const result = await pyodide.runPythonAsync(code);
             self.postMessage({ type: "result", result });
             self.postMessage({ type: "done" });
@@ -46,5 +77,4 @@ self.onmessage = async (event) => {
             self.postMessage({ type: "done" });
         }
     }
-
 };

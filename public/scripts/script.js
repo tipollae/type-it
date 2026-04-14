@@ -3,6 +3,14 @@ const socket = io();
 
 let currentEditor = null;
 
+// 8 bytes = 2 Int32 values
+const controlSAB = new SharedArrayBuffer(8);
+const control = new Int32Array(controlSAB);
+
+// buffer for UTF-8 input text
+const inputSAB = new SharedArrayBuffer(4096);
+const inputBytes = new Uint8Array(inputSAB);
+
 window.addEventListener("load", () => {
     currentEditor = window.editorView1;
 });
@@ -20,7 +28,11 @@ function createWorker(){
 
     worker = new Worker("scripts/pythonWorker.js")
 
-    worker.postMessage({ type: "init" });
+    worker.postMessage({
+        type: "init",
+        sab: controlSAB,
+        inputBuffer: inputSAB
+    });
 
     worker.onmessage = (event) => {
         const data = event.data;
@@ -102,9 +114,28 @@ function createWorker(){
 
         }
 
-        if (data.type === "get_input"){
+        if (data.type === "get_input") {
+            
+            const response = prompt(data.text || "Input:") ?? "";
 
-            prompt()
+            const encoded = new TextEncoder().encode(response);
+
+            inputBytes.fill(0);
+            inputBytes.set(encoded.slice(0, inputBytes.length));
+
+            Atomics.store(control, 1, Math.min(encoded.length,
+            inputBytes.length));
+
+            Atomics.store(control, 0, 1);
+            Atomics.notify(control, 0, 1);
+        }
+
+        if (data.type === "display_input"){
+
+                const line = document.createElement("div");
+                line.style.color = "white";
+                line.textContent = `${data.text} ${data.value}`;
+                consoleText.appendChild(line);
 
         }
 

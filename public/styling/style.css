@@ -302,3 +302,37 @@ body{
 
 
 }
+
+@media (max-width: 1920px){
+
+    .tabButton.active{
+
+        width: 150px;
+
+    }
+
+    #leftSide{
+
+        width: 300px;
+
+    }
+
+    #rightSide{
+
+        width: 400px;
+
+    }
+
+    #consoleDisplay{
+
+        font-size: 15.5px;
+
+    }
+
+    #chatContainer{
+
+        height: 180px;
+
+    }
+
+}
