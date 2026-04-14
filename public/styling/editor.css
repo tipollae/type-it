@@ -23,7 +23,7 @@
     background-color: white;
 }
 
-@media (max-width: 1920px){
+@media (max-width: 1400px){
 
     .editorTab .cm-content {
         font-family: "Roboto Mono", monospace;

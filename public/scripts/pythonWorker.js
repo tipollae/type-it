@@ -51,12 +51,6 @@ self.onmessage = async (event) => {
                 const bytes = inputBytes.slice(0, len);
                 const value = new TextDecoder().decode(bytes);
 
-                self.postMessage({
-                    type: "display_input",
-                    text: currentLine,
-                    value: value
-                });
-
                 currentLine = "";
 
                 return value;

@@ -7,16 +7,7 @@ let isPaused = false;
 
 socket.on("invalid-token", ()=>{
 
-    setTimeout(()=>{
-
-        loadingElement.style.display = "none";
-
-        fakeConsoleContainer.style.visibility = "visible";
-        fakeConsoleContainer.style.opacity = 1;
-
-        inputUser("Enter a username: ");
-
-    }, 2500)
+    window.location = "index.html";
 
 })
 
@@ -24,44 +15,22 @@ socket.on("existing-token", ()=>{
 
     setTimeout(()=>{
 
-        window.location = "rooms.html"
+        loadingElement.style.display = "none";
 
-    }, 400)
+        fakeConsoleContainer.style.visibility = "visible";
+        fakeConsoleContainer.style.opacity = 1;
 
-})
-
-socket.on("invalid-username", (message)=>{
-
-    const line = document.createElement("div");
-    line.textContent = message;
-    fakeConsole.appendChild(line);
-
-    inputUser("Enter a username: ")
-
-})
-
-socket.on("valid-username", (message, tokenID, username)=>{
-
-    const line = document.createElement("div");
-    line.textContent = message;
-    fakeConsole.appendChild(line);
-
-    localStorage.setItem("token", tokenID);
-    localStorage.setItem("username", username)
-
-    setTimeout(()=>{
-
-        const line2 = document.createElement("div");
-        line2.textContent = "Entering...";
-        fakeConsole.appendChild(line2);
+        const line = document.createElement("div");
+        line.textContent = `Welcome, ${localUsername}.`;
+        fakeConsole.appendChild(line);
 
         setTimeout(()=>{
 
-            window.location = "rooms.html"
+            inputUser("Enter a room code: ");
 
-        }, 500)
+        }, 1500)
 
-    }, 800);
+    }, 2500)
 
 })
 
@@ -103,10 +72,10 @@ document.addEventListener('keydown', (event) => {
         consoleDiv[consoleDiv.length-1].textContent += inputValue;
         
         const line = document.createElement("div");
-        line.textContent = "Validating input...";
+        line.textContent = "Searching room...";
         fakeConsole.appendChild(line)
 
-        socket.emit("create-user", String(inputValue))
+        //socket.emit("-user", String(inputValue))
         console.log(`input value: ${inputValue}`)
 
         isPaused = false;

@@ -76,7 +76,7 @@ print("hello world")`,
 
 const state2 = EditorState.create({
     doc: `#woah, another code editor!
-print('im feeling so gassy *farts cutely🎀*')`,
+print('im feeling so gassy *farts cutely*')`,
     extensions: [
         lineNumbers(),
         highlightActiveLineGutter(),

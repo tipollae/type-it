@@ -1,0 +1,34 @@
+
+
+#logout{
+
+    width: 120px;
+    padding: 10px;
+    padding-left: 25px;
+    padding-right: 25px;
+
+    text-align: center;
+
+    border: 2px solid white;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    color: red;
+
+    user-select: none;
+
+    font-family: "Roboto Mono", monospace;
+    font-weight: bold;
+
+    transition: width 0.5s ease-in-out, 
+                background-color 0.2s ease-in-out,
+                border 0.2s ease-in-out,
+                color 0.2s ease-in-out;
+
+}
+
+#logout:hover{
+
+    background-color: red;
+    color: white
+
+}

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coding coco</title>
 
-    <link rel="stylesheet" href="styling/style.css">
+    <link rel="stylesheet" href="styling/rooms.css">
     <link rel="stylesheet" href="styling/basics.css"> 
 
     <!-- google fonts -->
@@ -24,7 +24,10 @@
 
             <div id = "tabsContainer">
 
-                <div class = "tabButton active">Login.py</div>
+                <div class = "tabButton active">Rooms.py</div>
+                <div id = "createRoom" class = "tabButton" style = "margin-left: 20px">Create room</div>
+                <div id = "about" class = "tabButton" style = "margin-left: 20px">About</div>
+                <div id = "logout" style = "margin-left: 20px">Log out</div>
 
             </div>
 
@@ -36,9 +39,26 @@
 
     </div>
 
+    <script>
+
+        const buttons = document.querySelectorAll(".tabButton");
+
+        buttons.forEach(btn => {
+            btn.addEventListener("click", () => {
+
+                // remove active from all
+                buttons.forEach(b => b.classList.remove("active"));
+
+                // add to clicked one
+                btn.classList.add("active");
+            });
+        });
+
+    </script>
+
     <script type = "text/javascript" src = "/socket.io/socket.io.js"></script>
     <script type = "text/javascript" src = "scripts/clientSocketBasics.js"></script>
-    <script type = "text/javascript" src = "scripts/script.js"></script>
+    <script type = "text/javascript" src = "scripts/rooms.js"></script>
 
 </body>
 </html>
