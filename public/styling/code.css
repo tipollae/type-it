@@ -346,6 +346,8 @@ body{
 
     border: 2px solid white;
 
+    cursor: text;
+
     overflow-y: auto;
 
 }

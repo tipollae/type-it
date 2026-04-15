@@ -72,10 +72,12 @@ function inputUser(text){
     prompt.classList.add("consoleDiv")
     const input = document.createElement("input");
     input.classList.add("consoleInputs")
+    const br = document.createElement("br")
 
     prompt.textContent = text;
     prompt.appendChild(input);
 
+    fakeConsole.appendChild(br)
     fakeConsole.appendChild(prompt);
 
     input.focus();
