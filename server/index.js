@@ -161,7 +161,10 @@ async function tokensLoop(){
     const waitTimeHours = 0.4;
     const waitTime = waitTimeHours * milisecondConvertion;
 
+    console.log('loop')
+
     Object.keys(tokens).forEach(code => {
+        console.log(`last logged on ${tokens[code].lastLoggedOn}`)
         if (!tokens[code].lastLoggedOn) return;
         if ((currentTime - tokens[code].lastLoggedOn) >= expiryTime) {
             

@@ -118,8 +118,6 @@ function createWorker(){
         }
 
         if (data.type === "get_input") {
-            
-            //const response = prompt(data.text || "Input:") ?? "";
 
             const line = document.createElement("div");
             line.classList.add("userInput")

@@ -411,7 +411,7 @@ body{
 #chatInput{
 
     flex: 1;
-    height: 20px;
+    height: 100%;
     
     color: white;
     outline: none;
