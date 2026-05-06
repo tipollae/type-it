@@ -162,15 +162,25 @@ body{
 
 }
 
-#logo{
+#logoContainer{
 
-    position: relative;
+    position: absolute;
     left: 50%;
-    top: 10px;
+    top: 90px;
 
     transform: translateX(-50%);
+    width: max-content;
+    font-size: 30px;
 
-    width: 300px;
+    display: grid;
+    place-items: center;
+
+}
+
+#logo{
+
+    width: 70px;
+    height: auto;
 
 }
 

@@ -36,7 +36,7 @@ function createWorker(){
 
     worker.onmessage = (event) => {
         const data = event.data;
-
+        
         if (data.type === "ready") {
             
             if (alreadyStopped) {
@@ -77,15 +77,6 @@ function createWorker(){
             line.textContent = data.output;
             removeInputs();
             consoleText.appendChild(line);
-        }
-
-        if (data.type === "result") {
-            if (data.result !== undefined && data.result !== null) {
-                const line = document.createElement("div");
-                line.style.color = "white";
-                line.textContent = data.result;
-                consoleText.appendChild(line);
-            }
         }
 
         if (data.type === "error") {

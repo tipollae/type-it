@@ -4,6 +4,8 @@ let currentLine = "";
 let controlArray;
 let inputBytes;
 
+let isRunning = false;
+
 self.onmessage = async (event) => {
     const { type, code, sab, inputBuffer } = event.data;
 
@@ -19,7 +21,7 @@ self.onmessage = async (event) => {
             raw: (byte) => {
                 const ch = String.fromCharCode(byte);
 
-                currentLine += ch;
+                console.log("raw byte:", byte, "isRunning:", isRunning)
 
                 if (ch === "\n") {
                     self.postMessage({
@@ -28,6 +30,9 @@ self.onmessage = async (event) => {
                     });
                     currentLine = "";
                 }
+                
+                else currentLine += ch;
+
             }
         });
 
@@ -61,14 +66,26 @@ self.onmessage = async (event) => {
     }
 
     if (type === "run") {
+        console.log("run code")
         try {
+            const result = await pyodide.runPythonAsync(`
+${code}
+import sys
+sys.stdout.flush()
+`);
+        if (currentLine.length > 0) {
+            self.postMessage({
+                type: "stdout",
+                output: currentLine
+            });
             currentLine = "";
-            const result = await pyodide.runPythonAsync(code);
-            self.postMessage({ type: "result", result });
+        }
+            console.log(`currentLine: ${currentLine}`)
             self.postMessage({ type: "done" });
         } catch (err) {
             self.postMessage({ type: "error", error: String(err) });
             self.postMessage({ type: "done" });
+            currentLine = ""
         }
     }
 };

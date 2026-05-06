@@ -7,6 +7,7 @@ let isPaused = false;
 
 socket.on("invalid-token", ()=>{
 
+    alert("invalid token")
     window.location = "index.html";
 
 })
@@ -31,6 +32,25 @@ socket.on("existing-token", ()=>{
         }, 1500)
 
     }, 2500)
+
+})
+
+socket.on("invalid-room", (givenMsg)=>{
+
+    const br = document.createElement("br");
+    fakeConsole.appendChild(br)
+
+    const line = document.createElement("div");
+    line.textContent = givenMsg;
+    fakeConsole.appendChild(line);
+
+    inputUser("Enter a room code: ");
+
+})
+
+socket.on("valid-room", (givenRoomCode)=>{
+
+    window.location = `code.html#${givenRoomCode}`
 
 })
 
@@ -75,10 +95,10 @@ document.addEventListener('keydown', (event) => {
         
         const line = document.createElement("div");
         line.textContent = "Searching room...";
-        fakeConsole.appendChild(line)
+        fakeConsole.appendChild(line);
 
-        //socket.emit("-user", String(inputValue))
-        console.log(`input value: ${inputValue}`)
+        socket.emit("join-room", inputValue);
+        console.log(`input value: ${inputValue}`);
 
         isPaused = false;
 

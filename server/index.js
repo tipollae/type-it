@@ -51,12 +51,42 @@ const rooms = {};
 
 tokens[ID] = {
 
-username: "asdasd"
-sockets: [socketid1, socketid2]
+    username: username,
+    sockets: [socketID],
+    rooms: [],
+    lastLoggedOn: null,
+
 
 }
 
 */
+
+rooms["abcd"] = {
+
+    host: null,
+    hostToken: null,
+    users: {},
+    isDirty: false
+
+}
+
+/*
+rooms[ID] = {
+
+    host: username
+    hostToken: tokenID
+    users: {}
+    isDirty: false
+
+}
+
+users[tokenID] = {
+
+    socketID: socketid,
+    username: username,
+
+}
+*/ 
 
 //on connection tasks
 io.on("connection", (socket)=>{
@@ -67,6 +97,7 @@ io.on("connection", (socket)=>{
             socket.emit("existing-token", tokens[givenToken].username)
             socket.data.token = givenToken;
             socket.data.username = tokens[givenToken].username;
+            socket.data.roomID = null;
             tokens[givenToken].lastLoggedOn = null;
         }
 
@@ -99,18 +130,93 @@ io.on("connection", (socket)=>{
 
     })
 
+    socket.on("join-room", (givenRoomCode)=>{
+
+        let existingRoom = rooms[givenRoomCode];
+
+        if (!existingRoom){
+            socket.emit("invalid-room", "Room does not exist.");
+            return;
+        }
+
+        if (existingRoom.users[socket.data.token]){
+
+            console.log(`existing: ${existingRoom.tokens}`)
+            socket.emit("invalid-room", "You are already in that room.");
+            return;
+
+        }
+
+        socket.emit("valid-room", givenRoomCode)
+
+    })
+
+    socket.on("validate-room-entrance", (givenRoomCode)=>{
+
+        let loweredRoomCode = givenRoomCode.toLowerCase();
+
+        if (!rooms[loweredRoomCode]){
+            socket.emit("invalid-room-entrance", "Room does not exist."); 
+            return;
+        }
+
+        if (tokens[socket.data.token].rooms.includes(loweredRoomCode)) {
+            socket.emit("invalid-room-entrance", "You are already in this room"); 
+            return;
+        }
+
+        tokens[socket.data.token].rooms.push(loweredRoomCode);
+        rooms[loweredRoomCode].users[socket.data.token] = {
+
+            socketID: socket.id,
+            username: socket.data.username
+
+        }
+        socket.data.roomID = loweredRoomCode;
+
+        socket.join(loweredRoomCode);
+        socket.to(loweredRoomCode).emit("other-user-joined", socket.data.username, socket.id);
+
+        let usersList = [];
+
+        Object.keys(rooms[loweredRoomCode].users).forEach((roomUser)=>{
+
+            if (roomUser == socket.data.token) return;
+
+            let data = {}
+            data.socketID = rooms[loweredRoomCode].users[roomUser].socketID;
+            data.username = rooms[loweredRoomCode].users[roomUser].username;
+
+            usersList.push(data);
+
+        })
+
+        socket.emit("get-room-users", usersList);
+
+    })
+
     socket.on("disconnect", ()=>{
 
-        if (tokens[socket.data.token]){
+        if (!tokens[socket.data.token]){return}
 
-            const foundSocketIndex = tokens[socket.data.token].sockets.indexOf(socket.id);
-            tokens[socket.data.token].sockets.splice(foundSocketIndex, 1);
+        const foundSocketIndex = tokens[socket.data.token].sockets.indexOf(socket.id);
+        tokens[socket.data.token].sockets.splice(foundSocketIndex, 1);
 
-            if (tokens[socket.data.token].sockets.length === 0){
+        if (tokens[socket.data.token].sockets.length === 0){
 
-                tokens[socket.data.token].lastLoggedOn = Date.now();
+            tokens[socket.data.token].lastLoggedOn = Date.now();
 
-            }
+        }
+
+        if (socket.data.roomID){
+
+            let socketRoomID = socket.data.roomID;
+            delete rooms[socketRoomID].users[socket.data.token];
+            console.log(rooms[socketRoomID].users);
+
+            let foundRoomIndex = tokens[socket.data.token].rooms.indexOf(socketRoomID);
+            tokens[socket.data.token].rooms.splice(foundRoomIndex, 1);
+            io.to(socket.data.roomID).emit("user-left-room", socket.id);
 
         }
 
@@ -154,7 +260,7 @@ function validateUsername(username){
 async function tokensLoop(){
 
     const hours = 0.5;
-    const milisecondConvertion = 3600000
+    const milisecondConvertion = 3600000;
     const expiryTime = hours * milisecondConvertion; // converting hours to miliseconds
     const currentTime = Date.now();
 

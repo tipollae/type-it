@@ -53,6 +53,12 @@ body{
     height: 100%;
 
     border: 2px solid white;
+    font-size: 22px;
+
+    color: white;
+    font-family: "Roboto Mono", monospace;
+
+    overflow-y: auto;
 
 }
 
