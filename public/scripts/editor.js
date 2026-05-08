@@ -49,11 +49,11 @@ const myTheme = HighlightStyle.define([
     { tag: tags.punctuation, color: "#58d58d" },
 ]);
 
-const roomCodeInEditor = localStorage.getItem("token")
+const roomCode = String(window.location.href.split("#")[1])
 
 const state = EditorState.create({
     doc: `#people in the room can see what you code here
-#room code: ${roomCodeInEditor}
+#room code: ${roomCode}
 print("hello world")`,
   extensions: [
     lineNumbers(),
