@@ -577,3 +577,76 @@ body{
     }
 
 }
+
+@media (max-width: 970px){
+
+    body{
+        overflow-y: auto;
+    }
+
+    #container{
+
+        position: relative;
+        width: 98%;
+        height: auto;
+
+        top: auto;
+        left: auto;
+        transform: none;
+
+        margin: 20px auto;
+
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+    }
+
+    #middle{
+
+        position: relative;
+        top: auto;
+        transform: none;
+
+        width: 100%;
+        min-width: 250px;
+        height: 400px;
+        min-height: 400px;
+        order: 1;
+
+    }
+
+    #rightSide{
+
+        position: relative;
+        top: auto;
+        transform: none;
+
+        width: 100%;
+        min-width: 250px;
+        height: 700px;
+
+        order: 2;
+
+    }
+
+    #leftSide{
+
+        position: relative;
+        top: auto;
+        transform: none;
+
+        width: 100%;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        order: 3;
+
+    }
+
+    .otherTabsContainer{
+        width: 95%;
+    }
+
+}

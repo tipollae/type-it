@@ -212,7 +212,13 @@ io.on("connection", (socket)=>{
         }
 
         await wait(2000);
-        io.to(loweredRoomCode).emit("update-other-user-code", rooms[loweredRoomCode].otherUserCode);
+
+        if (!rooms[loweredRoomCode]) return;
+
+        io.to(loweredRoomCode).emit(
+            "update-other-user-code",
+            rooms[loweredRoomCode].otherUserCode
+        );
 
     })
 
