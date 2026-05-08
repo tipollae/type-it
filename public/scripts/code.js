@@ -9,20 +9,37 @@ const control = new Int32Array(controlSAB);
 const inputSAB = new SharedArrayBuffer(4096);
 const inputBytes = new Uint8Array(inputSAB);
 
-window.addEventListener("load", () => {
-    currentEditor = window.editorView1;
-});
-
 const consoleText = document.getElementById("consoleText");
 const runButton = document.getElementById("runCode");
 const stopButton = document.getElementById("stopCode");
 const inputItems = document.getElementsByClassName('userInput');
+const chatInput = document.getElementById("chatInput");
 
 let isRunning = false;
 let alreadyStopped = false;
 let executionPositive = true;
 let worker = null;
 let pausedForInput = false;
+
+let currentCode;
+let pastCode;
+
+window.addEventListener("load", () => {
+    currentEditor = window.editorView1;
+    currentCode = currentEditor.state.doc.toString();
+    pastCode = currentEditor.state.doc.toString();
+
+    if (!currentCode) return;
+
+    let data = {
+
+        socketID: socket.id,
+        code: currentCode,
+
+    }
+
+    socket.emit("update-user-code", data)
+});
 
 function createWorker(){
 
@@ -153,6 +170,7 @@ async function runCode() {
     consoleText.textContent = "";
 
     const code = currentEditor.state.doc.toString();
+    currentCode = code;
 
     worker.postMessage({
         type: "run",
@@ -216,20 +234,6 @@ function switchTab(givenTabID) {
     });
 }
 
-document.addEventListener('keydown', (event) => {
-    const keyName = event.key;
-
-    let container = inputItems[inputItems.length-1];
-    let foundInput = container.querySelector("input");
-
-    if (keyName === 'Enter' && pausedForInput && document.activeElement === foundInput) {
-
-        removeInputs();
-        submitInput(foundInput.value);
-
-    }
-});
-
 function removeInputs(){
 
     Array.from(inputItems).forEach((current)=>{
@@ -259,3 +263,35 @@ function focusInput(){
     if (foundInput) foundInput.focus();
 
 }
+
+function sendMessage(){
+
+    let message = chatInput.value;
+    chatInput.value = "";
+
+    if (message.length > 0) socket.emit("send-message", message);
+
+}
+
+document.addEventListener('keydown', (event) => {
+    const keyName = event.key;
+
+    if (keyName === 'Enter' && document.activeElement === chatInput){
+
+        sendMessage()
+
+    }
+
+    let container = inputItems[inputItems.length - 1];
+    if (!container) return;
+
+    let foundInput = container.querySelector("input");
+
+    if (keyName === 'Enter' && pausedForInput && document.activeElement === foundInput) {
+
+        removeInputs();
+        submitInput(foundInput.value);
+
+    }
+
+});

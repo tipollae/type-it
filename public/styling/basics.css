@@ -184,6 +184,14 @@ body{
 
 }
 
+.normalText{
+
+    font-family: "Roboto Mono", monospace;
+    font-size: 30px;
+    color: white;  
+
+}
+
 /* HTML: <div class="loader"></div> */
 .loader  {
   width: fit-content;

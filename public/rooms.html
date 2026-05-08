@@ -26,9 +26,8 @@
             <div id = "tabsContainer">
 
                 <div class = "tabButton active">Rooms.py</div>
-                <div id = "createRoom" class = "tabButton" style = "margin-left: 20px">Create room</div>
-                <div id = "about" class = "tabButton" style = "margin-left: 20px">About</div>
-                <div id = "logout" style = "margin-left: 20px">Logout</div>
+                <div id = "createRoom" class = "tabButton" onclick = "createRoomPrompt()" style = "margin-left: 20px">Create room</div>
+                <div id = "logout" onclick = "logOutPrompt()" style = "margin-left: 20px">Logout</div>
 
             </div>
 
@@ -40,6 +39,12 @@
 
         </div>
 
+    </div>
+
+    <div id = "createRoomBlurr">
+
+        <div id = "creatingRoomText" class = "normalText">Creating room...</div>
+        
     </div>
 
     <script>

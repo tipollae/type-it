@@ -3,7 +3,16 @@ const loadingElement = document.getElementById("frontPageLoader");
 const fakeConsoleContainer = document.getElementById("fakeConsoleContainer");
 const fakeConsole = document.getElementById("fakeConsole");
 const usernameInput = document.getElementById("usernameInput");
+
+const createRoomBlurr = document.getElementById("createRoomBlurr");
+
 let isPaused = false;
+
+socket.on('disconnect', ()=>{
+    alert("You have been disconnected from the server");
+    location.reload();
+});
+
 
 socket.on("invalid-token", ()=>{
 
@@ -78,6 +87,23 @@ function focusInput(){
     const consoleInputs = document.getElementsByClassName("consoleInputs");
     const foundInput = consoleInputs[consoleInputs.length - 1];
     if (foundInput) foundInput.focus();
+
+}
+
+function createRoomPrompt(){
+
+    isPaused = false;
+    createRoomBlurr.style.display = "block";
+    
+    
+    setTimeout(()=>socket.emit("create-room"), 1200)
+
+}
+
+function logOutPrompt(){
+
+    socket.emit("log-user-out");
+    localStorage.clear();
 
 }
 

@@ -1,5 +1,7 @@
 
 const leftSide = document.getElementById("leftSide");
+const chat = document.getElementById("chat");
+let localOtherCode = {};
 
 socket.on("existing-token", ()=>{
 
@@ -15,10 +17,85 @@ socket.on("invalid-token", ()=>{
 
 })
 
-socket.on("invalid-room-entrance", (givenMsg)=>{
+socket.on("invalid-room-entrance", (givenMessage)=>{
 
-    alert(givenMsg);
+    alert(givenMessage);
     window.location = "rooms.html"
+
+})
+
+socket.on('disconnect', ()=>{
+    alert("You have been disconnected from the server");
+    window.location = "rooms.html"
+});
+
+socket.on("host-left", ()=>{
+
+    alert("Host has left the room");
+
+})
+
+socket.on("request-code", ()=>{
+
+    if (!currentEditor) return;
+
+    currentCode = currentEditor.state.doc.toString();
+
+    if (!currentEditor || !currentCode) return;
+    if (pastCode == currentCode) return;
+
+    let data = {
+
+        socketID: socket.id,
+        code: currentCode,
+
+    }
+
+    console.log("emit code")
+    socket.emit("update-user-code", data)
+    pastCode = currentCode;
+
+})
+
+socket.on("update-other-user-code", (givenOtherCode)=>{
+
+    localOtherCode = givenOtherCode;
+
+    Object.keys(givenOtherCode).forEach((socketID)=>{
+
+        if (socketID == socket.id) return;
+
+        let panel = document.getElementById(socketID);
+
+        if (!panel) return;
+
+        let panelTab = panel.querySelector(".otherTab");
+        let newPanel = document.createElement("div")
+
+        let codeReference = givenOtherCode[socketID].code;
+        const lines = codeReference.split("\n");
+
+        lines.forEach(line => {
+
+            let testingLine = line.replace(" ", "");
+
+            if (testingLine.length > 0){
+                const div = document.createElement("div");
+                div.textContent = line.replace(/ /g, "\u00A0");
+                newPanel.appendChild(div);
+            }
+            else{
+                const br = document.createElement("br");
+                newPanel.appendChild(br);
+            }
+        });
+
+        panelTab.innerHTML = "";
+        panelTab.appendChild(newPanel);
+
+        console.log(givenOtherCode[socketID].code)
+
+    })
 
 })
 
@@ -40,6 +117,13 @@ socket.on("invalid-room-entrance", (givenMsg)=>{
 socket.on("other-user-joined", (givenUsername, givenSocketID)=>{
 
     addOtherUserTab(givenUsername, givenSocketID);
+    serverMessage(`${givenUsername} has joined the room :D`)
+
+})
+
+socket.on("entrance-greeting", (givenUsername, givenRoomCode)=>{
+
+    serverMessage(`Welcome ${givenUsername}, to room ${givenRoomCode} :D`)
 
 })
 
@@ -51,10 +135,17 @@ socket.on("get-room-users", (usersList)=>{
 
 })
 
-socket.on("user-left-room", (givenSocketID)=>{
+socket.on("user-left-room", (givenSocketID, givenUsername)=>{
 
     const element = document.getElementById(givenSocketID);
     element.remove();
+    serverMessage(`${givenUsername} has left the room :(`)
+
+})
+
+socket.on("emit-message-to-all", (givenUsername, givenMessage)=>{
+
+    displayChatMessage(givenUsername, givenMessage);
 
 })
 
@@ -76,6 +167,7 @@ function addOtherUserTab(givenUsername, givenSocketID){
     usernameTab.classList.add("otherTabButton");
     usernameTab.classList.add("active");
     copyTab.classList.add("otherTabButton");
+    copyTab.onclick = () => copyThisCode(givenSocketID);
     otherTab.classList.add("otherTab");
 
     otherUserTabButtonsContainer.appendChild(usernameTab);
@@ -83,5 +175,64 @@ function addOtherUserTab(givenUsername, givenSocketID){
     otherUserTabContainer.appendChild(otherUserTabButtonsContainer);
     otherUserTabContainer.appendChild(otherTab);
     leftSide.appendChild(otherUserTabContainer);
+
+}
+
+function displayChatMessage(givenUsername, givenMessage){
+//#f39422
+    
+    const messageContainer = document.createElement("div");
+    const message = document.createElement("span")
+    const username = document.createElement("span");
+
+    username.textContent = `${givenUsername}: `;
+    username.style.color = "#f39422";
+    message.textContent = givenMessage;
+
+    messageContainer.appendChild(username);
+    messageContainer.appendChild(message);
+
+    chat.appendChild(messageContainer);
+
+    const verticalScroll = chat.scrollTop;
+    const maxScroll = chat.scrollHeight - chat.clientHeight;
+
+    if (verticalScroll >= maxScroll - 100){
+
+        chat.scrollTop = chat.scrollHeight;
+
+    }
+
+
+}
+
+function serverMessage(givenMessage){
+
+    const messageContainer = document.createElement("div");
+    const message = document.createElement("span")
+
+    message.textContent = `Server: ${givenMessage}`;
+    message.style.color = "#1cffd4";
+
+    messageContainer.appendChild(message);
+
+    chat.appendChild(messageContainer);
+
+    const verticalScroll = chat.scrollTop;
+    const maxScroll = chat.scrollHeight - chat.clientHeight;
+
+    if (verticalScroll >= maxScroll - 100){
+
+        chat.scrollTop = chat.scrollHeight;
+
+    }
+
+}
+
+function copyThisCode(givenSocketID){
+
+    if (!localOtherCode[givenSocketID]) return;
+
+    navigator.clipboard.writeText(localOtherCode[givenSocketID].code);
 
 }

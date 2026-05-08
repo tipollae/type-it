@@ -53,7 +53,7 @@ body{
     height: 100%;
 
     border: 2px solid white;
-    font-size: 22px;
+    font-size: 16px;
 
     color: white;
     font-family: "Roboto Mono", monospace;
@@ -402,6 +402,20 @@ body{
 
 }
 
+#chat span{
+
+    color: white;
+    font-family: "Roboto Mono", monospace;
+    font-size: 15px;
+
+}
+
+#chat div{
+
+    margin-left: 10px;
+
+}
+
 #chatInputContainer{
 
     position: relative;
@@ -429,6 +443,11 @@ body{
     font-family: "Roboto Mono", monospace;
     font-size: 15px;
 
+}
+
+#chatInput::placeholder {
+  color: white; /* Set custom color */
+  opacity: 0.7;      /* 1 for full visibility, 0.5 for semi-transparent */
 }
 
 #sendButton{
@@ -496,6 +515,14 @@ body{
 .userInput input:focus {
     outline: none;
     box-shadow: none;
+}
+
+.normalText{
+
+    font-family: "Roboto Mono", monospace;
+    font-size: 30px;
+    color: white;  
+
 }
 
 @media (max-width: 1400px){

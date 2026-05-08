@@ -16,7 +16,7 @@ socket.on("invalid-token", ()=>{
 
         inputUser("Enter a username: ");
 
-    }, 2500)
+    }, 500)
 
 })
 
