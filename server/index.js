@@ -323,25 +323,33 @@ io.on("connection", (socket)=>{
         if (socket.data.roomID){
 
             let socketRoomID = socket.data.roomID;
-            if (!rooms[socketRoomID]) return;
-            delete rooms[socketRoomID].users[socket.data.token];
-            delete rooms[socketRoomID].otherUserCode[socket.id];
-            delete rooms[socketRoomID].dirtyUsers[socket.id];
 
-            let foundRoomIndex = tokens[socket.data.token].rooms.indexOf(socketRoomID);
+            if (rooms[socketRoomID]) {
 
-            if (foundRoomIndex !== -1) {
-                tokens[socket.data.token].rooms.splice(foundRoomIndex, 1);
-            }
-            io.to(socketRoomID).emit("user-left-room", socket.id, socket.data.username);
+                delete rooms[socketRoomID].users[socket.data.token];
+                delete rooms[socketRoomID].otherUserCode[socket.id];
+                delete rooms[socketRoomID].dirtyUsers[socket.id];
 
-            if (rooms[socketRoomID].hostToken == socket.data.token){
-                rooms[socketRoomID].noHostTimer = setTimeout(() => {
-                    if (!rooms[socketRoomID]) return;
-                    io.to(socketRoomID).emit("host-left");
-                    clearRoom(socketRoomID);
-                    console.log(`rooms: ${Object.keys(rooms).length}`);
-                }, 10000);
+                let foundRoomIndex = tokens[socket.data.token].rooms.indexOf(socketRoomID);
+
+                if (foundRoomIndex !== -1) {
+                    tokens[socket.data.token].rooms.splice(foundRoomIndex, 1);
+                }
+
+                io.to(socketRoomID).emit("user-left-room", socket.id, socket.data.username);
+
+                if (rooms[socketRoomID].hostToken == socket.data.token){
+
+                    rooms[socketRoomID].noHostTimer = setTimeout(() => {
+
+                        if (!rooms[socketRoomID]) return;
+
+                        io.to(socketRoomID).emit("host-left");
+                        clearRoom(socketRoomID);
+
+                    }, 10000);
+
+                }
 
             }
 
