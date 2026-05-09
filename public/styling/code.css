@@ -578,6 +578,22 @@ body{
 
 }
 
+#messageDisplay{
+
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 10%;
+
+    color: white;
+    font-family: "Roboto Mono", monospace;
+    font-size: 20px;
+    padding: 10px;
+
+    display: none;
+
+}
+
 @media (max-width: 970px){
 
     body{

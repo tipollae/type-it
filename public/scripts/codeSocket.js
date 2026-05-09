@@ -1,6 +1,8 @@
 
 const leftSide = document.getElementById("leftSide");
 const chat = document.getElementById("chat");
+let messageTimeout = null;
+let isCopying = false;
 let localOtherCode = {};
 
 socket.on("existing-token", ()=>{
@@ -59,9 +61,13 @@ socket.on("request-code", ()=>{
 
 socket.on("update-other-user-code", (givenOtherCode)=>{
 
-    localOtherCode = givenOtherCode;
-
     Object.keys(givenOtherCode).forEach((socketID)=>{
+
+        if (!localOtherCode[socketID]){
+
+            localOtherCode[socketID] = givenOtherCode[socketID]
+
+        }
 
         if (socketID == socket.id) return;
 
@@ -229,10 +235,56 @@ function serverMessage(givenMessage){
 
 }
 
-function copyThisCode(givenSocketID){
+async function copyThisCode(givenSocketID){
+
+    console.log(localOtherCode[givenSocketID].code + "COPY")
 
     if (!localOtherCode[givenSocketID]) return;
+    if (isCopying) return
 
-    navigator.clipboard.writeText(localOtherCode[givenSocketID].code);
+    isCopying = true;
+
+    try {
+        await navigator.clipboard.writeText(localOtherCode[givenSocketID].code);
+        displayMessage("Code copied", "#00C400")
+    } catch (err) {
+        displayMessage("Failed to copy code", "red")
+    }
+    finally {isCopying = false;}
+
+}
+
+function displayMessage(message, color){
+
+    const msgDisplay = document.getElementById("messageDisplay");
+
+    msgDisplay.innerHTML = `<center>${message}</center>`;
+    msgDisplay.style.backgroundColor = color;
+    msgDisplay.style.display = "block";
+    const TIME = 2500;
+
+    if (messageTimeout === null){
+
+        messageTimeout = setTimeout(function(){
+
+            msgDisplay.innerHTML = "";
+            msgDisplay.style.display = "none";
+
+        }, TIME)
+
+    }
+
+    else{
+
+        clearTimeout(messageTimeout);
+        messageTimeout = null;
+        messageTimeout = setTimeout(function(){
+
+            msgDisplay.innerHTML = "";
+            msgDisplay.style.display = "none";
+
+        }, TIME);
+
+    }
 
 }
