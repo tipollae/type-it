@@ -27,7 +27,6 @@ let pastCode;
 window.addEventListener("load", () => {
     currentEditor = window.editorView1;
     currentCode = currentEditor.state.doc.toString();
-    pastCode = currentEditor.state.doc.toString();
 
     if (!currentCode) return;
 

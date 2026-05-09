@@ -102,7 +102,9 @@ io.on("connection", (socket)=>{
             socket.data.username = tokens[givenToken].username;
             socket.data.roomID = null;
             tokens[givenToken].lastLoggedOn = null;
-            tokens[givenToken].sockets.push(socket.id)
+            if (!tokens[givenToken].sockets.includes(socket.id)) {
+                tokens[givenToken].sockets.push(socket.id);
+            }
         }
 
         else{
@@ -423,7 +425,7 @@ async function tokensLoop(){
     const expiryTime = hours * milisecondConvertion; // converting hours to miliseconds
     const currentTime = Date.now();
 
-    const waitTimeHours = 0.4;
+    const waitTimeHours = 0.15;
     const waitTime = waitTimeHours * milisecondConvertion;
 
     console.log('loop')
@@ -434,7 +436,9 @@ async function tokensLoop(){
         if ((currentTime - tokens[code].lastLoggedOn) >= expiryTime) {
             
             let usernameIndex = usernames.indexOf(tokens[code].username);
-            usernames.splice(usernameIndex, 1);
+            if (usernameIndex !== -1) {
+                usernames.splice(usernameIndex, 1);
+            }
             delete tokens[code];
 
             console.log('delete token');
