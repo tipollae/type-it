@@ -142,6 +142,11 @@ io.on("connection", (socket)=>{
         givenRoomCode = givenRoomCode.replaceAll(" ", "")
         let existingRoom = rooms[givenRoomCode];
 
+        if (!tokens[socket.data.token]) {
+            socket.emit("invalid-token");
+            return;
+        }
+
         if (!existingRoom){
             socket.emit("invalid-room", "Room does not exist.");
             return;
@@ -331,10 +336,12 @@ io.on("connection", (socket)=>{
             io.to(socketRoomID).emit("user-left-room", socket.id, socket.data.username);
 
             if (rooms[socketRoomID].hostToken == socket.data.token){
-
-                socket.emit("host-left");
-                clearRoom(socketRoomID)
-                console.log(`rooms: ${rooms}`)
+                rooms[socketRoomID].noHostTimer = setTimeout(() => {
+                    if (!rooms[socketRoomID]) return;
+                    io.to(socketRoomID).emit("host-left");
+                    clearRoom(socketRoomID);
+                    console.log(`rooms: ${Object.keys(rooms).length}`);
+                }, 10000);
 
             }
 
@@ -456,6 +463,7 @@ async function dirtyRoomsLoop(){
 
     Object.keys(rooms).forEach((roomID)=>{
 
+        if (!rooms[roomID]) return;
         if (!rooms[roomID].isDirty) return;
         io.to(roomID).emit("update-other-user-code", rooms[roomID].dirtyUsers);
 
