@@ -63,12 +63,7 @@ socket.on("update-other-user-code", (givenOtherCode)=>{
 
     Object.keys(givenOtherCode).forEach((socketID)=>{
 
-        if (!localOtherCode[socketID]){
-
-            localOtherCode[socketID] = givenOtherCode[socketID]
-
-        }
-
+        localOtherCode[socketID] = givenOtherCode[socketID]
         if (socketID == socket.id) return;
 
         let panel = document.getElementById(socketID);
