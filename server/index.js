@@ -425,7 +425,7 @@ async function tokensLoop(){
     const expiryTime = hours * milisecondConvertion; // converting hours to miliseconds
     const currentTime = Date.now();
 
-    const waitTimeHours = 0.15;
+    const waitTimeHours = 0.13;
     const waitTime = waitTimeHours * milisecondConvertion;
 
     console.log('loop')

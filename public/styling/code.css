@@ -649,8 +649,8 @@ body{
     }
 
     .otherTabsContainer{
-        width: 100px;
-        max-width: 430px;
+        width: 430px;
+        min-width: 430px;
+        flex-shrink: 0;
     }
-
 }
