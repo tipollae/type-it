@@ -135,6 +135,8 @@ function createWorker(){
             line.appendChild(text);
             consoleText.appendChild(line);
             userInput.focus();
+            userInput.enterKeyHint = "done";
+            userInput.autocomplete = "off";
 
             pausedForInput = true;
 
@@ -288,8 +290,9 @@ document.addEventListener('keydown', (event) => {
 
     if (keyName === 'Enter' && pausedForInput && document.activeElement === foundInput) {
 
+        const value = foundInput.value;
         removeInputs();
-        submitInput(foundInput.value);
+        submitInput(value);
 
     }
 
