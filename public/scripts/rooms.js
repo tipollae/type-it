@@ -73,6 +73,8 @@ function inputUser(text){
     const br = document.createElement("br")
 
     prompt.textContent = text;
+    input.enterKeyHint = "done";
+    input.autocomplete = "off";
     prompt.appendChild(input);
 
     fakeConsole.appendChild(br)
