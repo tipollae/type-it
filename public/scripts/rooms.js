@@ -6,22 +6,25 @@ const usernameInput = document.getElementById("usernameInput");
 
 const createRoomBlurr = document.getElementById("createRoomBlurr");
 
+let messageTimeout = null;
 let isPaused = false;
 
 socket.on('disconnect', ()=>{
-    alert("You have been disconnected from the server");
-    location.reload();
+    displayMessage("You have been disconnected from the server", "red")
+    setTimeout(()=>{location.reload()}, 600);
 });
 
 
 socket.on("invalid-token", ()=>{
 
-    alert("invalid token")
-    window.location = "index.html";
+    displayMessage("Invalid token", "red")
+    setTimeout(()=>{window.location = "index.html"}, 600);
 
 })
 
 socket.on("existing-token", ()=>{
+
+    displayMessage("Logged in!", "#00C400")
 
     setTimeout(()=>{
 
@@ -46,6 +49,8 @@ socket.on("existing-token", ()=>{
 
 socket.on("invalid-room", (givenMsg)=>{
 
+    displayMessage("Invalid room", "red")
+
     const br = document.createElement("br");
     fakeConsole.appendChild(br)
 
@@ -59,6 +64,7 @@ socket.on("invalid-room", (givenMsg)=>{
 
 socket.on("valid-room", (givenRoomCode)=>{
 
+    displayMessage("Room found!", "#00C400")
     window.location = `code.html#${givenRoomCode}`
 
 })
@@ -108,6 +114,42 @@ function logOutPrompt(){
     localStorage.clear();
 
 }
+
+function displayMessage(message, color){
+
+    const msgDisplay = document.getElementById("messageDisplay");
+
+    msgDisplay.innerHTML = `<center>${message}</center>`;
+    msgDisplay.style.backgroundColor = color;
+    msgDisplay.style.display = "block";
+    const TIME = 2500;
+
+    if (messageTimeout === null){
+
+        messageTimeout = setTimeout(function(){
+
+            msgDisplay.innerHTML = "";
+            msgDisplay.style.display = "none";
+
+        }, TIME)
+
+    }
+
+    else{
+
+        clearTimeout(messageTimeout);
+        messageTimeout = null;
+        messageTimeout = setTimeout(function(){
+
+            msgDisplay.innerHTML = "";
+            msgDisplay.style.display = "none";
+
+        }, TIME);
+
+    }
+
+}
+
 
 document.addEventListener('keydown', (event) => {
   const keyName = event.key;

@@ -3,6 +3,8 @@ const loadingElement = document.getElementById("frontPageLoader");
 const fakeConsoleContainer = document.getElementById("fakeConsoleContainer");
 const fakeConsole = document.getElementById("fakeConsole");
 const usernameInput = document.getElementById("usernameInput");
+
+let messageTimeout = null;
 let isPaused = false;
 
 socket.on("invalid-token", ()=>{
@@ -22,6 +24,8 @@ socket.on("invalid-token", ()=>{
 
 socket.on("existing-token", ()=>{
 
+    displayMessage("Existing token", "#00C400")
+
     setTimeout(()=>{
 
         window.location = "rooms.html"
@@ -35,6 +39,7 @@ socket.on("invalid-username", (message)=>{
     const line = document.createElement("div");
     line.textContent = message;
     fakeConsole.appendChild(line);
+    displayMessage(message, "red")
 
     inputUser("Enter a username: ")
 
@@ -91,6 +96,41 @@ function focusInput(){
     const consoleInputs = document.getElementsByClassName("consoleInputs");
     const foundInput = consoleInputs[consoleInputs.length - 1];
     if (foundInput) foundInput.focus();
+
+}
+
+function displayMessage(message, color){
+
+    const msgDisplay = document.getElementById("messageDisplay");
+
+    msgDisplay.innerHTML = `<center>${message}</center>`;
+    msgDisplay.style.backgroundColor = color;
+    msgDisplay.style.display = "block";
+    const TIME = 2500;
+
+    if (messageTimeout === null){
+
+        messageTimeout = setTimeout(function(){
+
+            msgDisplay.innerHTML = "";
+            msgDisplay.style.display = "none";
+
+        }, TIME)
+
+    }
+
+    else{
+
+        clearTimeout(messageTimeout);
+        messageTimeout = null;
+        messageTimeout = setTimeout(function(){
+
+            msgDisplay.innerHTML = "";
+            msgDisplay.style.display = "none";
+
+        }, TIME);
+
+    }
 
 }
 
