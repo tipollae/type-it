@@ -110,7 +110,6 @@ io.on("connection", (socket)=>{
         else{
 
             socket.emit("invalid-token")
-            console.log('invalid token')
 
         }
 
@@ -119,7 +118,6 @@ io.on("connection", (socket)=>{
     socket.on("create-user", (username)=>{
 
         let validUsername = validateUsername(username);
-        console.log(validUsername);
 
         if (!validUsername[0]){
 
@@ -154,7 +152,6 @@ io.on("connection", (socket)=>{
 
         if (existingRoom.users[socket.data.token]){
 
-            console.log(`existing: ${existingRoom.users}`)
             socket.emit("invalid-room", "You are already in that room.");
             return;
 
@@ -287,8 +284,6 @@ io.on("connection", (socket)=>{
         if (!tokens[socket.data.token]) return;
 
         let tokenSockets = [...tokens[socket.data.token].sockets];
-        console.log("log user out")
-        console.log(tokenSockets)
 
         tokens[socket.data.token].manualLogOut = true;
 
@@ -446,7 +441,6 @@ async function tokensLoop(){
     console.log('loop')
 
     Object.keys(tokens).forEach(code => {
-        console.log(`last logged on ${tokens[code].lastLoggedOn}`)
         if (!tokens[code].lastLoggedOn) return;
         if ((currentTime - tokens[code].lastLoggedOn) >= expiryTime) {
             
@@ -474,8 +468,6 @@ async function dirtyRoomsLoop(){
         if (!rooms[roomID]) return;
         if (!rooms[roomID].isDirty) return;
         io.to(roomID).emit("update-other-user-code", rooms[roomID].dirtyUsers);
-
-        console.log(rooms[roomID].dirtyUsers);
 
         rooms[roomID].dirtyUsers = {}; //delete all dirtyUsers
         rooms[roomID].isDirty = false;

@@ -53,7 +53,6 @@ socket.on("request-code", ()=>{
 
     }
 
-    console.log("emit code")
     socket.emit("update-user-code", data)
     pastCode = currentCode;
 
@@ -93,8 +92,6 @@ socket.on("update-other-user-code", (givenOtherCode)=>{
 
         panelTab.innerHTML = "";
         panelTab.appendChild(newPanel);
-
-        console.log(givenOtherCode[socketID].code)
 
     })
 
@@ -231,8 +228,6 @@ function serverMessage(givenMessage){
 }
 
 async function copyThisCode(givenSocketID){
-
-    console.log(localOtherCode[givenSocketID].code + "COPY")
 
     if (!localOtherCode[givenSocketID]) return;
     if (isCopying) return
