@@ -115,7 +115,7 @@ Current protections include:
 * No XSS vulnerabilities
 
 # 🚨 Urgent and currently working on
-* Size limiting. Currently, there are no limits on the code size that you can paste/code into the editor. This is a big problem as this could cause the server to use a lot more storage, and has the potential to even crash if done with malicious intent. This same vulnerability can also be seen in the chat system.
+* Size limiting. Currently, there are no limits on the size of code that you can paste/code into the editor. This is a big problem as this could cause the server to use a lot more storage, and has the potential to even crash if done with malicious intent. This same vulnerability can also be seen in the chat system.
 * Rate limiting. Users with more knowledge with basic socket.io could read the code base and find a way to spam the server with code updates.
 
 # ➕ Potential features
