@@ -1,0 +1,35 @@
+
+
+
+.imageAndText{
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+
+}
+
+#fakeConsole p{
+
+    margin-left: 10px;
+
+}
+
+a {
+    color: #1cffd4;  
+}
+
+@media (max-width: 970px){
+
+    .imageAndText{
+
+        position: relative;
+
+        display: flex;
+        flex-direction: column;
+
+    }
+
+}
