@@ -49,7 +49,7 @@ const myTheme = HighlightStyle.define([
     { tag: tags.punctuation, color: "#58d58d" },
 ]);
 
-const MAX_CODE_LENGTH = 2000;
+const MAX_CODE_LENGTH = 10000;
 
 const limitCodeLength = EditorView.updateListener.of((update) => {
     if (!update.docChanged) return;

@@ -257,7 +257,7 @@ io.on("connection", (socket)=>{
         if (!rooms[socket.data.roomID]) return;
         if (!rooms[socket.data.roomID].users[socket.data.token]) return;
         if (!givenData || typeof givenData.code !== "string") return;
-        if (givenData.code.length > 2000) {console.log("tooo big"); return}
+        if (givenData.code.length > 10000) {console.log("tooo big"); return}
 
         rooms[socket.data.roomID].isDirty = true;
         rooms[socket.data.roomID].otherUserCode[socket.id] = givenData;
