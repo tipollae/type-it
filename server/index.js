@@ -2,6 +2,7 @@
 //importing express
 const express = require("express");
 const path = require("path");
+const { clearInterval } = require("timers");
 
 //new express instance
 const app = express();
@@ -185,12 +186,13 @@ io.on("connection", (socket)=>{
         rooms[loweredRoomCode].users[socket.data.token] = {};
         rooms[loweredRoomCode].users[socket.data.token].socketID = socket.id;
         rooms[loweredRoomCode].users[socket.data.token].username = socket.data.username;
+        rooms[loweredRoomCode].users[socket.data.token].messagesSent = 0;
 
         socket.data.roomID = loweredRoomCode;
 
         socket.join(loweredRoomCode);
         socket.to(loweredRoomCode).emit("other-user-joined", socket.data.username, socket.id);
-        socket.emit("entrance-greeting", socket.data.username, socket.data.roomID)
+        socket.emit("server-message", `Welcome ${socket.data.username}, to room ${socket.data.roomID} :D`)
 
         let usersList = [];
 
@@ -231,8 +233,22 @@ io.on("connection", (socket)=>{
         givenMessage = String(givenMessage);
 
         if (!socket.data.roomID) return;
+        if (!rooms[socket.data.roomID].users[socket.data.token]) return;
+        if (rooms[socket.data.roomID].users[socket.data.token].messagesSent + 1 > 10){
+
+            socket.emit("server-message", `Slow down there! You have been spamming the chat.`)            
+            return;
+
+        }
+        if (givenMessage.length > 800){
+
+            socket.emit("server-message", `Message is too long. Your message is ${givenMessage.length}/800 too big.`)            
+            return;
+
+        }
 
         io.to(socket.data.roomID).emit("emit-message-to-all", socket.data.username, givenMessage);
+        rooms[socket.data.roomID].users[socket.data.token].messagesSent ++
 
     });
 
@@ -240,6 +256,8 @@ io.on("connection", (socket)=>{
 
         if (!rooms[socket.data.roomID]) return;
         if (!rooms[socket.data.roomID].users[socket.data.token]) return;
+        if (!givenData || typeof givenData.code !== "string") return;
+        if (givenData.code.length > 2000) {console.log("tooo big"); return}
 
         rooms[socket.data.roomID].isDirty = true;
         rooms[socket.data.roomID].otherUserCode[socket.id] = givenData;
@@ -249,14 +267,21 @@ io.on("connection", (socket)=>{
 
     socket.on("create-room", ()=>{
 
-        let roomCode = generateRoomCode();
-
-        while (rooms[roomCode]) roomCode = generateRoomCode();
-
         if (!tokens[socket.data.token]){
             socket.emit("invalid-token");
             return;
         }
+
+        if (tokens[socket.data.token].createdRooms + 1 > 3){
+
+            socket.emit("failed-creating-room")
+            return;
+
+        }
+        
+        let roomCode = generateRoomCode();
+
+        while (rooms[roomCode]) roomCode = generateRoomCode();
 
         rooms[roomCode] = {
 
@@ -271,9 +296,22 @@ io.on("connection", (socket)=>{
             }, 10000),
             updateCodeRequest: setInterval(()=>{
                 io.to(roomCode).emit("request-code")
-            }, 1000)
+            }, 1000),
+            messageLimitingTimer: setInterval(()=>{
+
+                Object.keys(rooms[roomCode].users).forEach((token)=>{
+
+                    if (!rooms[roomCode].users[token]) return;
+                    if (rooms[roomCode].users[token].messagesSent === 0) return;
+                    rooms[roomCode].users[token].messagesSent --;
+
+                })
+
+            }, 3300)
         
         }
+
+        tokens[socket.data.token].createdRooms ++
 
         socket.emit("valid-room", roomCode);        
 
@@ -331,6 +369,7 @@ io.on("connection", (socket)=>{
                     tokens[socket.data.token].rooms.splice(foundRoomIndex, 1);
                 }
 
+                io.to(socketRoomID).emit("server-message", `${socket.data.username} has left the room :(`)
                 io.to(socketRoomID).emit("user-left-room", socket.id, socket.data.username);
 
                 if (rooms[socketRoomID].hostToken == socket.data.token){
@@ -372,8 +411,17 @@ function clearRoom(givenRoomID){
 
     clearTimeout(rooms[givenRoomID].noHostTimer)
     clearInterval(rooms[givenRoomID].updateCodeRequest);
+    clearInterval(rooms[givenRoomID].messageLimitingTimer)
     rooms[givenRoomID].noHostTimer = null;
     rooms[givenRoomID].updateCodeRequest = null;
+    rooms[givenRoomID].messageLimitingTimer = null;
+    
+    const hostToken = rooms[givenRoomID].hostToken;
+    if (tokens[hostToken]){
+
+        tokens[hostToken].createdRooms = Math.max(0, tokens[hostToken].createdRooms - 1);
+
+    }
 
     io.in(givenRoomID).disconnectSockets(true);
     delete rooms[givenRoomID];
@@ -392,6 +440,7 @@ function generateToken(username, socketID){
         username: username,
         sockets: [socketID],
         rooms: [],
+        createdRooms: 0,
         lastLoggedOn: null,
         manualLogOut: false,
 

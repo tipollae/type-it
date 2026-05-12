@@ -3,7 +3,6 @@ const loadingElement = document.getElementById("frontPageLoader");
 const fakeConsoleContainer = document.getElementById("fakeConsoleContainer");
 const fakeConsole = document.getElementById("fakeConsole");
 const usernameInput = document.getElementById("usernameInput");
-
 const createRoomBlurr = document.getElementById("createRoomBlurr");
 
 let messageTimeout = null;
@@ -19,6 +18,16 @@ socket.on("invalid-token", ()=>{
 
     displayMessage("Invalid token", "red")
     setTimeout(()=>{window.location = "index.html"}, 600);
+
+})
+
+socket.on("failed-creating-room", ()=>{
+
+    displayMessage("You can only own 3 rooms at a time", "red");
+    isPaused = true;
+    createRoomBlurr.style.display = "none";
+    buttons[1].classList.remove("active")
+    buttons[0].classList.add("active")
 
 })
 

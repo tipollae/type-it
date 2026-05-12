@@ -49,10 +49,32 @@ const myTheme = HighlightStyle.define([
     { tag: tags.punctuation, color: "#58d58d" },
 ]);
 
+const MAX_CODE_LENGTH = 2000;
+
+const limitCodeLength = EditorView.updateListener.of((update) => {
+    if (!update.docChanged) return;
+
+    const code = update.state.doc.toString();
+
+    if (code.length > MAX_CODE_LENGTH) {
+        update.view.dispatch({
+            changes: {
+                from: MAX_CODE_LENGTH,
+                to: update.state.doc.length,
+                insert: ""
+            }
+        });
+
+        alert("Code has exceeded character limit")
+        
+    }
+});
+
 const roomCode = String(window.location.href.split("#")[1])
 
 const state = EditorState.create({
     doc: `#people in the room can see what you code here
+
 #room code: ${roomCode}
 print("hello world")`,
   extensions: [
@@ -61,6 +83,8 @@ print("hello world")`,
     history(),
     drawSelection(),
     highlightActiveLine(),
+    
+    limitCodeLength,
 
     keymap.of([
       indentWithTab,
@@ -86,6 +110,8 @@ print('im feeling so gassy *farts cutely*')`,
         history(),
         drawSelection(),
         highlightActiveLine(),
+
+        limitCodeLength,
 
         keymap.of([
             indentWithTab,

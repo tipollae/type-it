@@ -119,9 +119,9 @@ socket.on("other-user-joined", (givenUsername, givenSocketID)=>{
 
 })
 
-socket.on("entrance-greeting", (givenUsername, givenRoomCode)=>{
+socket.on("server-message", (message)=>{
 
-    serverMessage(`Welcome ${givenUsername}, to room ${givenRoomCode} :D`)
+    serverMessage(message)
 
 })
 
@@ -137,7 +137,6 @@ socket.on("user-left-room", (givenSocketID, givenUsername)=>{
 
     const element = document.getElementById(givenSocketID);
     element.remove();
-    serverMessage(`${givenUsername} has left the room :(`)
 
 })
 
