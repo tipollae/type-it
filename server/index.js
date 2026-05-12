@@ -16,7 +16,7 @@ app.use((req, res, next) => {
 app.use(express.static("../public"))
 //serve index.html
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public', 'index.html'));
+  res.sendFile(path.join(__dirname, '../public'));
 });
 
 //creates an http server using the created express app

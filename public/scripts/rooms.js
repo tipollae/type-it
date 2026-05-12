@@ -17,7 +17,7 @@ socket.on('disconnect', ()=>{
 socket.on("invalid-token", ()=>{
 
     displayMessage("Invalid token", "red")
-    setTimeout(()=>{window.location = "index.html"}, 600);
+    setTimeout(()=>{window.location = "../"}, 600);
 
 })
 
@@ -74,7 +74,7 @@ socket.on("invalid-room", (givenMsg)=>{
 socket.on("valid-room", (givenRoomCode)=>{
 
     displayMessage("Room found!", "#00C400")
-    window.location = `code.html#${givenRoomCode}`
+    window.location = `/code#${givenRoomCode}`
 
 })
 

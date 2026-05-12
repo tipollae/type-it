@@ -42,7 +42,7 @@ window.addEventListener("load", () => {
 
 function createWorker(){
 
-    worker = new Worker("scripts/pythonWorker.js")
+    worker = new Worker("../scripts/pythonWorker.js")
 
     worker.postMessage({
         type: "init",

@@ -15,20 +15,20 @@ socket.on("existing-token", ()=>{
 socket.on("invalid-token", ()=>{
 
     alert("invalid token")
-    window.location = "index.html";
+    window.location = "../";
 
 })
 
 socket.on("invalid-room-entrance", (givenMessage)=>{
 
     alert(givenMessage);
-    window.location = "rooms.html"
+    window.location = "../rooms"
 
 })
 
 socket.on('disconnect', ()=>{
     alert("You have been disconnected from the server");
-    window.location = "rooms.html"
+    window.location = "../rooms"
 });
 
 socket.on("host-left", ()=>{

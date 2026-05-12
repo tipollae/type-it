@@ -28,7 +28,7 @@ socket.on("existing-token", ()=>{
 
     setTimeout(()=>{
 
-        window.location = "rooms.html"
+        window.location = "/rooms"
 
     }, 400)
 
@@ -62,7 +62,7 @@ socket.on("valid-username", (message, tokenID, username)=>{
 
         setTimeout(()=>{
 
-            window.location = "rooms.html"
+            window.location = "/rooms"
 
         }, 500)
 
