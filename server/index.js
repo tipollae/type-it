@@ -1,4 +1,6 @@
 
+require("dotenv").config();
+
 //importing express
 const express = require("express");
 const path = require("path");
@@ -403,7 +405,61 @@ io.on("connection", (socket)=>{
 
     })
 
+    socket.on("check-admin", (givenPassword)=>{
+
+        console.log(process.env.ADMIN_PASSWORD)
+
+        if (process.env.ADMIN_PASSWORD !== givenPassword){
+            socket.emit("invalid-access");
+            return;
+        }
+
+        else{
+
+            socket.data.admin = true;
+            socket.emit("valid-access")
+            extractData(socket);
+
+        }
+
+    })
+
+    socket.on("requesting-admin-data", ()=>{
+
+        if (socket.data.admin){
+
+            extractData(socket);
+
+        }
+
+    })
+
+
 })
+
+function extractData(givenSocket){
+
+    if (!givenSocket.data.admin){
+
+        givenSocket.emit("invalid-access");
+        return;
+
+    }
+
+    var fakeRooms = {};
+
+    Object.keys(rooms).forEach((roomID)=>{
+
+        fakeRooms[roomID] = {};
+        fakeRooms[roomID].users = Object.values(rooms[roomID].users).map(user => ({
+            username: user.username,
+            socketID: user.socketID,
+        }));
+
+    })
+
+    givenSocket.emit("confidential-data", fakeRooms, Object.keys(tokens).length);
+}
 
 function clearRoom(givenRoomID){
 

@@ -1,0 +1,126 @@
+
+
+
+#panelDisplay{
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+    visibility: hidden;
+
+    font-family: "Roboto Mono", monospace;
+    color: white;
+
+    transition: opacity 0.2s ease-in-out;
+
+}
+
+#refreshButton{
+
+    transform: translateX(-50%);
+    margin-left: 50%;
+
+    width: max-content;
+    padding: 5px;
+    border: 2px solid white;
+
+    font-size: 20px;
+    cursor: pointer;
+
+    transition: background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+
+}
+
+#refreshButton:hover{
+
+    background-color: white;
+    color: black;
+
+}
+
+#roomsDisplay{
+
+    position: relative;
+    margin-left: 50%;
+
+    display: flex;
+    flex-direction: column;
+
+    transform: translateX(-50%);
+    width: 475px;
+    height: 100px;
+
+    gap: 10px;
+
+}
+
+.roomTab{
+
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+}
+
+.roomTabButton{
+
+    width: 80px;
+    padding: 10px;
+    padding-left: 25px;
+    padding-right: 25px;
+
+    font-weight: bold;
+
+    border: 2px solid white;
+    border-bottom: 2px solid transparent;
+
+}
+
+.roomTabButton.active{
+
+    background-color: white;
+    color: black;
+
+}
+
+.roomTabContents{
+
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    border: 2px solid white;
+    font-size: 16px;
+
+    color: white;
+    font-family: "Roboto Mono", monospace;
+
+    overflow-y: auto;
+
+}
+
+br {
+   display: block;
+   margin: 1px 0;
+}
+
+@media (max-width: 975px){
+
+    .roomTab{
+
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 85%;
+
+    }
+
+}

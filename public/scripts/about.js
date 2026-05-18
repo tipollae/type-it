@@ -11,6 +11,6 @@ function stopLoading(){
         fakeConsoleContainer.style.visibility = "visible";
         fakeConsoleContainer.style.opacity = 1;
 
-    }, 2500)
+    }, 1200)
 
 }

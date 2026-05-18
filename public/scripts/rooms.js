@@ -50,9 +50,9 @@ socket.on("existing-token", ()=>{
 
             inputUser("Enter a room code: ");
 
-        }, 1500)
+        }, 1200)
 
-    }, 2500)
+    }, 1500)
 
 })
 
