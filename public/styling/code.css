@@ -525,7 +525,7 @@ body{
 
 }
 
-@media (max-width: 1400px){
+@media (max-width: 1555px){
 
     .tabButton.active{
 
@@ -553,7 +553,7 @@ body{
 
     #chatContainer{
 
-        height: 180px;
+        height: 300px;
 
     }
 
