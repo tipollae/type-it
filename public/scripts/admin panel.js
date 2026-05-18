@@ -68,6 +68,12 @@ socket.on("confidential-data", (givenRoomsData, givenTokensLength) => {
 
 })
 
+socket.on('disconnect', ()=>{
+    alert("You have been disconnected from the server");
+    location.reload();
+});
+
+
 /*
 
 <div class = "roomTab">
